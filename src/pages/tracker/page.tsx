@@ -39,10 +39,11 @@ interface RealTimeBus {
         longitude: string;
         speed: string;
         heading: string;
-    } | null;
+    };
     eta_to_next_stop_minutes: number | null;
     last_update: string;
 }
+
 interface ScheduleProgress {
     schedule_id: number;
     route_id: number;
