@@ -39,11 +39,10 @@ interface RealTimeBus {
         longitude: string;
         speed: string;
         heading: string;
-    };
+    } | null;
     eta_to_next_stop_minutes: number | null;
     last_update: string;
 }
-
 interface ScheduleProgress {
     schedule_id: number;
     route_id: number;
@@ -209,18 +208,27 @@ export default function TrackerPage() {
             const realtimeData = realtimeRes.data.success ? realtimeRes.data.data : [];
             const merged = scheduleData.map((item: any) => {
                 const rt = realtimeData.find((r: RealTimeBus) => r.bus_id === item.bus.bus_id);
-                return {
-                    bus: item.bus,
-                    schedule: item.schedule,
-                    realtime: rt ? {
-                        speed: parseFloat(rt.location.speed),
-                        heading: parseFloat(rt.location.heading),
-                        eta_minutes: rt.eta_to_next_stop_minutes,
-                        last_update: rt.last_update,
-                        latitude: parseFloat(rt.location.latitude),
-                        longitude: parseFloat(rt.location.longitude),
-                    } : null,
-                };
+                // Safely check if rt and rt.location exist
+                if (rt && rt.location) {
+                    return {
+                        bus: item.bus,
+                        schedule: item.schedule,
+                        realtime: {
+                            speed: parseFloat(rt.location.speed),
+                            heading: parseFloat(rt.location.heading),
+                            eta_minutes: rt.eta_to_next_stop_minutes,
+                            last_update: rt.last_update,
+                            latitude: parseFloat(rt.location.latitude),
+                            longitude: parseFloat(rt.location.longitude),
+                        },
+                    };
+                } else {
+                    return {
+                        bus: item.bus,
+                        schedule: item.schedule,
+                        realtime: null,
+                    };
+                }
             });
             setActiveBuses(merged);
         } catch (error) {
@@ -231,7 +239,6 @@ export default function TrackerPage() {
             setLastRefresh(new Date());
         }
     }, []);
-
     // Fetch bus current location (includes route_progress)
     const fetchBusCurrentLocation = useCallback(async (busId: number) => {
         try {
