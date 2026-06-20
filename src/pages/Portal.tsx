@@ -125,9 +125,18 @@ export default function PortalPage() {
     const total = stops.length;
     const completed = stops.filter(s => s.is_passed).length;
     const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-    const nextStop = stops.find(s => s.is_next);
+
+    // Compute next stop: first not-passed stop ordered by stop_order
+    const nextStop = stops
+        .filter(s => !s.is_passed)
+        .sort((a, b) => a.stop_order - b.stop_order)[0] || null;
+
+    // Compute previous (last passed) stop
+    const prevStop = stops
+        .filter(s => s.is_passed)
+        .sort((a, b) => b.stop_order - a.stop_order)[0] || null;
+
     const tripComplete = completed === total && total > 0;
-    const prevStop = nextStop ? stops[stops.findIndex(s => s.stop_id === nextStop.stop_id) - 1] : null;
 
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -271,10 +280,10 @@ export default function PortalPage() {
 
                         <div className="space-y-2">
                             {stops
-                                .filter((_, idx) => showAllStops || idx >= Math.max(0, stops.findIndex(s => s.is_next) - 1))
+                                .filter((_, idx) => showAllStops || idx >= Math.max(0, stops.findIndex(s => s.stop_id === nextStop?.stop_id) - 1))
                                 .map((stop) => {
                                     const isDone = stop.is_passed;
-                                    const isNext = stop.is_next;
+                                    const isNext = stop.stop_id === nextStop?.stop_id;
                                     const isJustArrived = justArrived === stop.stop_id;
                                     return (
                                         <div

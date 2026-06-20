@@ -501,7 +501,7 @@ export default function DashboardPage() {
                                 <tr className="border-b border-background-100 bg-background-50/50">
                                     <th className="text-left px-5 py-3 text-xs font-semibold text-foreground-400 uppercase">Schedule Code</th>
                                     <th className="text-left px-5 py-3 text-xs font-semibold text-foreground-400 uppercase">Departure Time</th>
-                                    <th className="text-left px-5 py-3 text-xs font-semibold text-foreground-400 uppercase">Driver</th>
+                                    {/*<th className="text-left px-5 py-3 text-xs font-semibold text-foreground-400 uppercase">Driver</th>*/}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -509,7 +509,7 @@ export default function DashboardPage() {
                                     <tr key={schedule.schedule_id} className="border-b border-background-50">
                                         <td className="px-5 py-3 text-foreground-900 font-mono font-semibold text-xs">{schedule.schedule_code}</td>
                                         <td className="px-5 py-3 text-foreground-600 text-xs">{new Date(schedule.departure_time).toLocaleString()}</td>
-                                        <td className="px-5 py-3 text-foreground-600">{schedule.driver_name || 'Not Assigned'}</td>
+                                        {/*<td className="px-5 py-3 text-foreground-600">{schedule.driver_name || 'Not Assigned'}</td>*/}
                                     </tr>
                                 ))}
                                 {(!stats?.upcoming_schedules || stats.upcoming_schedules.length === 0) && (
